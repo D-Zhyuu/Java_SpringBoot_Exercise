@@ -34,10 +34,10 @@
         INSERT INTO t_user (
             username, password, salt, phone, email, gender, avatar, is_delete,
             created_user, created_time, modified_user, modified_time
-        ) VALUES {
+        ) VALUES (
             #{username}, #{password}, #{salt}, #{phone}, #{email}, #{gender}, #{avatar}, #{isDelete},
             #{createdUser}, #{createdTime}, #{modifiedUser}, #{modifiedTime}
-        }
+        )
     </insert>
 
     <!--select语句在执行的时候，查询的结果是一个对象或多个对象-->
