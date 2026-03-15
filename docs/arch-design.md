@@ -79,7 +79,7 @@ mybatis.mapper-locations=classpath:mapper/*.xml
 
 在本项目中，使用MyBatis来连接后端与数据库
 
-#### 接口设计
+#### 持久层接口设计
 
 对于一个实体类，需要设计相应的接口，接口中声明的方法即希望执行的SQL语句  
 比如说，[UserMapper.java](../store/src/main/java/com/cy/store/mapper/UserMapper.java)中声明了查询与插入的SQL语句
@@ -103,3 +103,60 @@ User findByUsername(String username);
 #### XML文件设计
 
 因为使用了MyBatis，可以很好地将Java代码与SQL代码区分开来，我们在[UserMapper.xml](../store/src/main/resources/mapper/UserMapper.xml)中编写相应的SQL语句
+
+---
+到此为止，持久层的功能已经编写完毕，可以针对该功能进行一次单元测试，如[UserMapperTests.java](../store/src/test/java/com/cy/store/mapper/UserMapperTests.java)
+
+## 业务层功能编写
+
+所谓业务层，是处理该系统中业务逻辑的地方。通过调用持久层，根据需要处理的业务在数据库中进行增删改查的操作
+
+### 业务层总体设计逻辑
+
+#### 异常类设计
+
+同实体类的基类类似，我们先定义了一个业务层的基类[ServiceException.java](../store/src/main/java/com/cy/store/service/ex/ServiceException.java)，该类继承自`RuntimeException`，仅包含不同的构造方法  
+针对当前处理的业务，需要先分析可能抛出的异常，以用户注册功能为例，在注册阶段可能出现的异常有
+
+- 用户名被占用
+- 插入数据库时因服务器宕机引发的失败
+
+针对这两个异常，分别编写[UsernameDuplicatedException.java](../store/src/main/java/com/cy/store/service/ex/UsernameDuplicatedException.java)和[InsertException.java](../store/src/main/java/com/cy/store/service/ex/InsertException.java)，它们所做的事只有继承异常类基类，用于区分异常的类型
+
+#### 业务层接口设计
+
+在业务层，根据业务的需求来设计接口，用户的注册业务在[IUserService.java](../store/src/main/java/com/cy/store/service/IUserService.java)中被声明
+
+#### 业务层功能实现
+
+根据业务层的接口设计，实现具体的功能模块，体现为实现接口中声明的各种方法，如[UserServiceImpl.java](../store/src/main/java/com/cy/store/service/impl/UserServiceImpl.java)
+
+---
+至此，业务层的逻辑也已介绍完毕，在进行单元测试的过程中，由于异常类设计被放在了控制层中，为方便定位问题，需要在业务层测试类中手动捕获异常信息，如[UserServiceTests.java](../store/src/test/java/com/cy/store/service/UserServiceTests.java)
+
+## 控制层
+
+控制层负责与前端接收到的数据进行交互，并将后端的响应结果送回给前端
+
+### 数据交互格式
+
+一般而言，数据交互格式定义为JSON格式，根据需要增添不同的属性字段，如[JsonResult.java](../store/src/main/java/com/cy/store/util/JsonResult.java)
+
+### 控制层设计
+
+#### 控制层基类
+
+为避免重复处理相同的异常，在SpringBoot中，可以通过`@ExceptionHandler`注解将该项目中产生的所有异常交给被该注解修饰的方法进行处理，如[BaseController.java](../store/src/main/java/com/cy/store/controller/BaseController.java)
+
+#### 数据交互
+
+指定好前端的URL路径，利用`@RequestMapping`注解将其一一对应  
+因为产生的异常将被自动交由异常处理方法处理，在编写控制层逻辑时异常处理并不需要我们去操心  
+详情请看[UserController.java](../store/src/main/java/com/cy/store/controller/UserController.java)
+
+---
+在进行控制层单元测试时，我们已经建立了前端与后端的通信，在运行服务后，可以通过前端URL路径进行测试，例如，针对用户注册功能，就可以通过输入下面的URL测试，检查数据库中是否有相应的修改
+
+```txt
+http://localhost:8080/users/reg?username=Takamatsu Tomori&password=1122
+```

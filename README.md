@@ -1,8 +1,8 @@
 # Java_SpringBoot_Exercise
 
-开发日志请参看[docs\dev-log.md](docs\dev-log.md)
+开发日志请参看[dev-log.md](docs\dev-log.md)
 
-架构设计方法请参看[docs\arch-design.md](docs\arch-design.md)
+架构设计方法请参看[arch-design.md](docs\arch-design.md)
 
 本项目涉及到的技术栈如下
 
