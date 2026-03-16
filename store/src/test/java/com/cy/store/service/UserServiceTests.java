@@ -41,4 +41,10 @@ public class UserServiceTests {
             System.out.println(e.getMessage());
         }
     }
+
+    @Test
+    public void login() {
+        User user = userService.login("Gugu Gaga", "1122");
+        System.out.println(user);
+    }
 }
