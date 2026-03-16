@@ -138,6 +138,46 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			// 1. 监听注册按钮是否被点击，如果被点击可以执行一个方法
+			$("#btn-reg").click(function () {
+				// 在前端检验输入的密码和确认密码是否一致
+				let pwd = $("input[name='password']").val();
+				let confirmPwd = $("input[type='text'][placeholder='请再次输入密码']").val();
+				if (!pwd || !confirmPwd) {
+					alert("密码和确认密码不能为空！");
+					return;
+				}
+				if (pwd !== confirmPwd) {
+					alert("两次输入的密码不一致，请重新输入！");
+					return;
+				}
+				// 2. 发生ajax()的异步请求来完成用户的注册功能
+				/* 动态获取表单中控件的数据，不推荐使用这种方式，供学习语法使用
+				* let username = $("input[name='username']").val();
+				* let pwd = $("input[name='password']").val();
+				*
+				* data: "username=" + username + "&password=" + pwd,
+				*/
+				console.log($("#form-reg").serialize());
+				$.ajax({
+					url: "/users/reg",
+					type: "POST",
+					data: $("#form-reg").serialize(),
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							alert("注册成功");
+						} else {
+							alert("注册失败");
+						}
+					},
+					error: function (xhr) {
+						alert("注册时产生未知的错误！" + xhr.status);
+					}
+				});
+			})
+		</script>
 	</body>
 
 </html>
