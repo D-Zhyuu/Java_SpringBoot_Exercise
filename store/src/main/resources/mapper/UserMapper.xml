@@ -58,4 +58,15 @@
         SET password = #{password}, modified_user = #{modifiedUser}, modified_time = #{modifiedTime}
         WHERE uid = #{uid}
     </update>
+
+    <update id="updateInfoByUid">
+        UPDATE t_user
+        SET
+            <!--if表示条件判断标签，属性test接收的是一个返回值为boolean类型的条件-->
+            <if test="phone!=null">phone = #{phone},</if>
+            <if test="email!=null">email = #{email},</if>
+            <if test="gender!=null">gender = #{gender},</if>
+            modified_user = #{modifiedUser}, modified_time = #{modifiedTime}
+        WHERE uid = #{uid}
+    </update>
 </mapper>

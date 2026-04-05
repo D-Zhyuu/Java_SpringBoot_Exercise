@@ -116,6 +116,46 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @Override
+    public User getByUid(Integer uid) {
+        User result = userMapper.findByUid(uid);
+        if (result == null) {
+            throw new UserNotFoundException("用户数据不存在");
+        }
+        if (result.getIsDelete() == 1) {
+            throw new UserNotFoundException("用户已被删除，请联系管理员");
+        }
+
+        // 只返回需要的四个数据
+        User user = new User();
+        user.setUsername(result.getUsername());
+        user.setPhone(result.getPhone());
+        user.setEmail(result.getEmail());
+        user.setGender(result.getGender());
+
+        return user;
+    }
+
+    @Override
+    public void changeInfo(Integer uid, String username, User user) {
+        User result = userMapper.findByUid(uid);
+        if (result == null) {
+            throw new UserNotFoundException("用户数据不存在");
+        }
+        if (result.getIsDelete() == 1) {
+            throw new UserNotFoundException("用户已被删除，请联系管理员");
+        }
+
+        user.setUid(uid);
+        user.setModifiedUser(username);
+        user.setModifiedTime(new Date());
+
+        Integer rows = userMapper.updateInfoByUid(user);
+        if (rows != 1) {
+            throw new UpdateException("更新个人资料时产生未知异常");
+        }
+    }
+
     /* 定义一个md5算法的加密处理 */
     private String getMD5Password(String password, String salt) {
         // md5加密算法方法的调用(进行三次加密)

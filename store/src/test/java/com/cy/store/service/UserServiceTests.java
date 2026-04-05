@@ -52,4 +52,18 @@ public class UserServiceTests {
     public void changePassword() {
         userService.changePassword(6, "administrator", "0214", "0214");
     }
+
+    @Test
+    public void getByUid() {
+        System.out.println(userService.getByUid(6));
+    }
+
+    @Test
+    public void changeInfo() {
+        User user = new User();
+        user.setPhone("12345678901");
+        user.setEmail("123457@qq.com");
+        user.setGender(0);
+        userService.changeInfo(6, "administrator", user);
+    }
 }

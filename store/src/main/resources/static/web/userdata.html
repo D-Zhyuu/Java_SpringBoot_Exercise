@@ -147,7 +147,7 @@
 							<div class="form-group">
 								<label class="col-md-2 control-label">电话号码：</label>
 								<div class="col-md-8">
-									<input `id="phone" name="phone" type="text" class="form-control" placeholder="请输入电话号码" value="13311311313">
+									<input id="phone" name="phone" type="text" class="form-control" placeholder="请输入电话号码" value="13311311313">
 								</div>
 							</div>
 							<div class="form-group">
@@ -262,6 +262,61 @@
 			</div>
 		</footer>
 		<!--页脚结束-->
+		<script type="text/javascript">
+			$(document).ready(function () {
+				$.ajax({
+					url: "/users/get_by_uid",
+					type: "GET",
+					data: null,
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							// 将查询到的数据重新设置到控件中
+							$("#username").val(json.data.username);
+							if (json.data.phone != null) {
+								$("#phone").val(json.data.phone);
+							} else {
+								$("#phone").val(null);
+							}
+							if (json.data.email != null) {
+								$("#email").val(json.data.email);
+							} else {
+								$("#email").val(null);
+							}
+							let radio = (json.data.gender == 0) ? $("#gender-female") : $("#gender-male");
+							// prop()表示给某个元素添加属性及属性的值
+							radio.prop("checked", "checked");
+						} else {
+							alert("用户数据不存在");
+						}
+					},
+					error: function (xhr) {
+						alert("查询用户数据时产生未知的异常！" + xhr.status);
+					}
+				});
+			});
+
+			$("#btn-change-info").click(function () {
+				$.ajax({
+					url: "/users/change_info",
+					type: "POST",
+					data: $("#form-change-info").serialize(),
+					dataType: "JSON",
+					success: function (json) {
+						if (json.state == 200) {
+							alert("修改成功");
+							// 修改成功后重新加载当前页面
+							location.href = "userdata.html";
+						} else {
+							alert("修改个人资料失败");
+						}
+					},
+					error: function (xhr) {
+						alert("修改个人资料时产生未知的异常！" + xhr.status);
+					}
+				});
+			});
+		</script>
 	</body>
 
 </html>
